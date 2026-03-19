@@ -1,0 +1,1320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HomeCore — Premium Appliances</title>
+  <style>
+    /* ── Reset & tokens ─────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg:        #f5f6f8;
+      --surface:   #ffffff;
+      --border:    #e2e5ea;
+      --text:      #1a1d23;
+      --muted:     #6b7280;
+      --accent:    #2563eb;
+      --accent-h:  #1d4ed8;
+      --danger:    #ef4444;
+      --success:   #16a34a;
+      --radius:    12px;
+      --shadow:    0 2px 12px rgba(0,0,0,.08);
+      --shadow-lg: 0 8px 32px rgba(0,0,0,.14);
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+    a { text-decoration: none; color: inherit; }
+    button { cursor: pointer; border: none; background: none; font: inherit; }
+    img { display: block; max-width: 100%; }
+
+    /* ── Header ─────────────────────────────────────────────────── */
+    header {
+      position: sticky; top: 0; z-index: 100;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      box-shadow: 0 1px 8px rgba(0,0,0,.06);
+    }
+    .header-inner {
+      max-width: 1280px; margin: 0 auto;
+      padding: 0 24px;
+      height: 64px;
+      display: flex; align-items: center; justify-content: space-between; gap: 20px;
+    }
+    .logo {
+      display: flex; align-items: center; gap: 10px;
+      font-size: 1.35rem; font-weight: 800; letter-spacing: -.5px;
+    }
+    .logo-icon {
+      width: 36px; height: 36px; border-radius: 9px;
+      background: var(--accent);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .logo-icon svg { width: 20px; height: 20px; fill: #fff; }
+    .logo span { color: var(--accent); }
+
+    .search-wrap {
+      flex: 1; max-width: 440px;
+      position: relative;
+    }
+    .search-wrap input {
+      width: 100%; padding: 9px 16px 9px 40px;
+      border: 1.5px solid var(--border); border-radius: 8px;
+      font-size: .9rem; background: var(--bg);
+      transition: border-color .2s;
+      outline: none;
+    }
+    .search-wrap input:focus { border-color: var(--accent); background: #fff; }
+    .search-wrap svg {
+      position: absolute; left: 12px; top: 50%; transform: translateY(-50%);
+      width: 17px; height: 17px; stroke: var(--muted); fill: none;
+    }
+
+    .cart-btn {
+      position: relative;
+      display: flex; align-items: center; gap: 8px;
+      padding: 8px 18px; border-radius: 8px;
+      background: var(--accent); color: #fff;
+      font-weight: 600; font-size: .9rem;
+      transition: background .18s;
+    }
+    .cart-btn:hover { background: var(--accent-h); }
+    .cart-btn svg { width: 18px; height: 18px; stroke: #fff; fill: none; }
+
+    .wishlist-nav-btn {
+      position: relative;
+      display: flex; align-items: center; gap: 8px;
+      padding: 8px 18px; border-radius: 8px;
+      background: var(--surface); color: var(--text);
+      border: 1.5px solid var(--border);
+      font-weight: 600; font-size: .9rem;
+      transition: all .18s;
+    }
+    .wishlist-nav-btn:hover { border-color: var(--danger); color: var(--danger); }
+    .wishlist-nav-btn.active { background: #fff0f0; border-color: var(--danger); color: var(--danger); }
+    .wl-nav-badge {
+      position: absolute; top: -6px; right: -6px;
+      min-width: 18px; height: 18px; padding: 0 4px;
+      border-radius: 9px; background: var(--danger);
+      color: #fff; font-size: .7rem; font-weight: 700;
+      display: none; align-items: center; justify-content: center;
+      line-height: 1;
+    }
+
+    .cart-badge {
+      position: absolute; top: -6px; right: -6px;
+      min-width: 18px; height: 18px; padding: 0 4px;
+      border-radius: 9px; background: var(--danger);
+      color: #fff; font-size: .7rem; font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+      line-height: 1;
+      display: none;
+    }
+
+    /* ── Hero banner ─────────────────────────────────────────────── */
+    .hero {
+      max-width: 1280px; margin: 32px auto 0; padding: 0 24px;
+    }
+    .hero-inner {
+      background: linear-gradient(120deg, #1e3a8a 0%, #2563eb 60%, #3b82f6 100%);
+      border-radius: 20px; padding: 52px 56px;
+      display: flex; align-items: center; justify-content: space-between;
+      overflow: hidden; position: relative;
+    }
+    .hero-inner::after {
+      content: '';
+      position: absolute; right: -40px; top: -40px;
+      width: 320px; height: 320px;
+      border-radius: 50%;
+      background: rgba(255,255,255,.06);
+    }
+    .hero-text h1 { font-size: 2.2rem; font-weight: 800; color: #fff; line-height: 1.2; }
+    .hero-text p { margin-top: 12px; color: rgba(255,255,255,.75); max-width: 380px; font-size: 1.02rem; line-height: 1.6; }
+    .hero-text .hero-cta {
+      display: inline-flex; align-items: center; gap: 8px;
+      margin-top: 24px; padding: 12px 28px;
+      background: #fff; color: var(--accent);
+      border-radius: 10px; font-weight: 700; font-size: .95rem;
+      box-shadow: 0 4px 14px rgba(0,0,0,.2);
+      transition: transform .18s, box-shadow .18s;
+    }
+    .hero-cta:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,.25); }
+    .hero-img { font-size: 8rem; line-height: 1; position: relative; z-index: 1; }
+
+    /* ── Category pills ─────────────────────────────────────────── */
+    .section { max-width: 1280px; margin: 40px auto 0; padding: 0 24px; }
+    .section-title {
+      font-size: 1.25rem; font-weight: 700; margin-bottom: 20px;
+    }
+    .cats {
+      display: flex; gap: 10px; flex-wrap: wrap;
+    }
+    .cat-pill {
+      padding: 8px 18px; border-radius: 999px;
+      background: var(--surface); border: 1.5px solid var(--border);
+      font-size: .87rem; font-weight: 500; cursor: pointer;
+      transition: all .18s;
+    }
+    .cat-pill:hover, .cat-pill.active {
+      background: var(--accent); border-color: var(--accent); color: #fff;
+    }
+
+    /* ── Tag listbox ─────────────────────────────────────────────── */
+    .tag-filter-row {
+      display: flex; align-items: center; gap: 12px;
+      margin-top: 14px; flex-wrap: wrap;
+    }
+    .tag-label {
+      font-size: .78rem; font-weight: 600; color: var(--muted);
+      text-transform: uppercase; letter-spacing: .5px;
+    }
+    .tag-listbox-wrap { position: relative; }
+    .tag-listbox-btn {
+      display: flex; align-items: center; gap: 8px;
+      padding: 7px 14px; border-radius: 8px;
+      border: 1.5px solid var(--border); background: var(--surface);
+      font-size: .88rem; font-weight: 600; cursor: pointer;
+      transition: border-color .18s; min-width: 160px;
+    }
+    .tag-listbox-btn:hover, .tag-listbox-btn.open { border-color: var(--accent); }
+    .tag-listbox-btn .tl-chevron {
+      margin-left: auto; font-size: .7rem; transition: transform .18s;
+    }
+    .tag-listbox-btn.open .tl-chevron { transform: rotate(180deg); }
+    .tag-selected-chips {
+      display: flex; gap: 4px; flex-wrap: wrap; flex: 1;
+    }
+    .tag-chip {
+      padding: 1px 8px; border-radius: 4px;
+      font-size: .75rem; font-weight: 700; color: #fff;
+    }
+    .tag-chip-new    { background: #2563eb; }
+    .tag-chip-sale   { background: #dc2626; }
+    .tag-chip-top    { background: #059669; }
+    .tag-chip-others { background: #7c3aed; }
+
+    .tag-dropdown {
+      position: absolute; top: calc(100% + 6px); left: 0;
+      min-width: 200px; background: var(--surface);
+      border: 1.5px solid var(--border); border-radius: 10px;
+      box-shadow: var(--shadow-lg); z-index: 50;
+      padding: 6px;
+      display: none;
+    }
+    .tag-dropdown.open { display: block; }
+    .tag-option {
+      display: flex; align-items: center; gap: 10px;
+      padding: 9px 12px; border-radius: 7px;
+      cursor: pointer; font-size: .88rem; font-weight: 500;
+      transition: background .15s;
+      user-select: none;
+    }
+    .tag-option:hover { background: var(--bg); }
+    .tag-option input[type=checkbox] { display: none; }
+    .tag-checkbox {
+      width: 17px; height: 17px; border-radius: 4px; flex-shrink: 0;
+      border: 2px solid var(--border); background: var(--surface);
+      display: flex; align-items: center; justify-content: center;
+      transition: all .15s;
+    }
+    .tag-option.checked .tag-checkbox {
+      border-color: transparent;
+    }
+    .tag-option.checked[data-tag="new"]    .tag-checkbox { background: #2563eb; }
+    .tag-option.checked[data-tag="sale"]   .tag-checkbox { background: #dc2626; }
+    .tag-option.checked[data-tag="top"]    .tag-checkbox { background: #059669; }
+    .tag-option.checked[data-tag="others"] .tag-checkbox { background: #7c3aed; }
+    .tag-checkbox-tick { color: #fff; font-size: .65rem; font-weight: 900; display: none; }
+    .tag-option.checked .tag-checkbox-tick { display: block; }
+    .tag-dot {
+      width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0;
+    }
+    .tag-dropdown-footer {
+      border-top: 1px solid var(--border); margin-top: 4px; padding-top: 6px;
+      display: flex; justify-content: flex-end;
+    }
+    .tag-clear-btn {
+      font-size: .78rem; font-weight: 600; color: var(--muted);
+      padding: 4px 8px; border-radius: 5px; transition: color .15s;
+    }
+    .tag-clear-btn:hover { color: var(--danger); }
+
+    /* ── Heart toggle on card ───────────────────────────────────── */
+    .card-heart {
+      position: absolute; top: 10px; right: 10px;
+      width: 32px; height: 32px; border-radius: 50%;
+      background: rgba(255,255,255,.88);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1rem; transition: background .18s, transform .18s;
+      z-index: 2;
+    }
+    .card-heart:hover { background: #fff; transform: scale(1.15); }
+    .card-heart.liked { color: var(--danger); }
+
+    /* ── Wishlist page ──────────────────────────────────────────── */
+    #wishlistPage { display: none; }
+    #wishlistPage.visible { display: block; }
+    .wl-header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 24px; flex-wrap: wrap; gap: 12px;
+    }
+    .wl-clear-btn {
+      padding: 7px 16px; border-radius: 8px;
+      border: 1.5px solid var(--border);
+      font-size: .85rem; font-weight: 600; color: var(--muted);
+      transition: all .18s;
+    }
+    .wl-clear-btn:hover { border-color: var(--danger); color: var(--danger); }
+    .wl-empty {
+      text-align: center; padding: 80px 20px;
+      color: var(--muted);
+    }
+    .wl-empty-icon { font-size: 4rem; margin-bottom: 16px; }
+    .wl-empty h3 { font-size: 1.2rem; font-weight: 700; color: var(--text); margin-bottom: 8px; }
+    .wl-empty p { font-size: .9rem; }
+    .wl-empty-cta {
+      display: inline-block; margin-top: 20px;
+      padding: 10px 24px; border-radius: 8px;
+      background: var(--accent); color: #fff;
+      font-weight: 600; font-size: .9rem;
+      transition: background .18s;
+    }
+    .wl-empty-cta:hover { background: var(--accent-h); }
+
+    /* ── Product grid ───────────────────────────────────────────── */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 22px;
+      margin-top: 28px;
+    }
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      transition: transform .2s, box-shadow .2s;
+      cursor: pointer;
+      display: flex; flex-direction: column;
+    }
+    .card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); }
+
+    .card-img {
+      height: 200px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 5rem; line-height: 1;
+      background: linear-gradient(135deg, #f0f4ff 0%, #e8eef9 100%);
+      position: relative;
+    }
+    .card-badge {
+      position: absolute; top: 12px; left: 12px;
+      padding: 3px 10px; border-radius: 6px;
+      font-size: .72rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: .5px;
+    }
+    .badge-new  { background: #dbeafe; color: #1d4ed8; }
+    .badge-sale { background: #fee2e2; color: #b91c1c; }
+    .badge-top  { background: #d1fae5; color: #065f46; }
+
+    .card-body { padding: 16px; flex: 1; display: flex; flex-direction: column; }
+    .card-category { font-size: .75rem; color: var(--muted); text-transform: uppercase; letter-spacing: .5px; font-weight: 600; }
+    .card-name { font-size: 1rem; font-weight: 700; margin-top: 4px; line-height: 1.3; }
+    .card-desc { font-size: .83rem; color: var(--muted); margin-top: 6px; line-height: 1.5; flex: 1; }
+    .card-stars { display: flex; gap: 2px; margin-top: 10px; }
+    .star { font-size: .85rem; }
+
+    .card-footer {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 12px 16px; border-top: 1px solid var(--border);
+      background: #fafbfc;
+    }
+    .price { font-size: 1.1rem; font-weight: 800; color: var(--text); }
+    .price-old { font-size: .82rem; color: var(--muted); text-decoration: line-through; margin-left: 6px; font-weight: 400; }
+    .add-btn {
+      padding: 7px 14px; border-radius: 7px;
+      background: var(--accent); color: #fff;
+      font-size: .82rem; font-weight: 600;
+      transition: background .18s;
+      display: flex; align-items: center; gap: 5px;
+    }
+    .add-btn:hover { background: var(--accent-h); }
+    .add-btn.in-cart { background: var(--success); }
+    .add-btn svg { width: 14px; height: 14px; stroke: #fff; fill: none; }
+
+    /* ── Modal (product detail) ─────────────────────────────────── */
+    .overlay {
+      position: fixed; inset: 0; z-index: 200;
+      background: rgba(0,0,0,.45);
+      backdrop-filter: blur(3px);
+      display: flex; align-items: center; justify-content: center;
+      padding: 20px;
+      opacity: 0; pointer-events: none;
+      transition: opacity .25s;
+    }
+    .overlay.open { opacity: 1; pointer-events: all; }
+    .modal {
+      background: var(--surface);
+      border-radius: 20px;
+      max-width: 860px; width: 100%;
+      max-height: 90vh; overflow-y: auto;
+      box-shadow: var(--shadow-lg);
+      transform: scale(.95);
+      transition: transform .25s;
+    }
+    .overlay.open .modal { transform: scale(1); }
+    .modal-grid { display: grid; grid-template-columns: 1fr 1fr; }
+    .modal-media {
+      background: linear-gradient(135deg, #f0f4ff 0%, #e8eef9 100%);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 9rem; line-height: 1; min-height: 340px;
+      border-radius: 20px 0 0 20px;
+      position: relative;
+    }
+    .modal-content { padding: 36px; }
+    .modal-close {
+      position: absolute; top: 16px; right: 16px;
+      width: 36px; height: 36px; border-radius: 50%;
+      background: rgba(255,255,255,.85);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.1rem; font-weight: 700; color: var(--text);
+      transition: background .18s;
+    }
+    .modal-close:hover { background: #fff; }
+    .modal-cat { font-size: .78rem; color: var(--accent); font-weight: 700; text-transform: uppercase; letter-spacing: .5px; }
+    .modal-name { font-size: 1.6rem; font-weight: 800; margin-top: 8px; line-height: 1.2; }
+    .modal-stars { display: flex; align-items: center; gap: 6px; margin-top: 10px; font-size: .88rem; color: var(--muted); }
+    .modal-desc { margin-top: 16px; font-size: .92rem; color: var(--muted); line-height: 1.7; }
+    .modal-specs { margin-top: 20px; display: flex; flex-direction: column; gap: 6px; }
+    .spec-row { display: flex; gap: 10px; font-size: .85rem; }
+    .spec-key { color: var(--muted); min-width: 120px; }
+    .spec-val { font-weight: 600; }
+    .modal-price-row { display: flex; align-items: baseline; gap: 10px; margin-top: 24px; }
+    .modal-price { font-size: 2rem; font-weight: 800; }
+    .modal-price-old { font-size: 1.1rem; color: var(--muted); text-decoration: line-through; }
+    .modal-actions { display: flex; gap: 12px; margin-top: 20px; }
+    .btn-primary {
+      flex: 1; padding: 13px 20px;
+      background: var(--accent); color: #fff;
+      border-radius: 10px; font-weight: 700; font-size: .95rem;
+      transition: background .18s;
+    }
+    .btn-primary:hover { background: var(--accent-h); }
+    .btn-primary.in-cart { background: var(--success); }
+    .btn-outline {
+      padding: 13px 16px;
+      border: 1.5px solid var(--border); border-radius: 10px;
+      font-weight: 600; font-size: .95rem;
+      transition: border-color .18s, background .18s;
+    }
+    .btn-outline:hover { border-color: var(--accent); background: #f0f4ff; }
+    .wishlist-active { color: var(--danger); border-color: var(--danger); }
+
+    /* ── Cart drawer ─────────────────────────────────────────────── */
+    .cart-overlay {
+      position: fixed; inset: 0; z-index: 300;
+      background: rgba(0,0,0,.4);
+      opacity: 0; pointer-events: none;
+      transition: opacity .25s;
+    }
+    .cart-overlay.open { opacity: 1; pointer-events: all; }
+    .cart-drawer {
+      position: fixed; top: 0; right: 0; bottom: 0; z-index: 301;
+      width: 400px; max-width: 100vw;
+      background: var(--surface);
+      box-shadow: -4px 0 32px rgba(0,0,0,.15);
+      display: flex; flex-direction: column;
+      transform: translateX(100%);
+      transition: transform .28s cubic-bezier(.4,0,.2,1);
+    }
+    .cart-overlay.open .cart-drawer { transform: translateX(0); }
+    .cart-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 20px 24px; border-bottom: 1px solid var(--border);
+    }
+    .cart-header h2 { font-size: 1.1rem; font-weight: 700; }
+    .cart-close-btn {
+      width: 32px; height: 32px; border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      background: var(--bg); font-size: 1.1rem;
+      transition: background .18s;
+    }
+    .cart-close-btn:hover { background: var(--border); }
+    .cart-items { flex: 1; overflow-y: auto; padding: 20px 24px; display: flex; flex-direction: column; gap: 16px; }
+    .cart-empty {
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      height: 100%; gap: 12px; color: var(--muted); text-align: center;
+    }
+    .cart-empty-icon { font-size: 3.5rem; }
+    .cart-item {
+      display: flex; gap: 14px; align-items: flex-start;
+      padding: 14px; border: 1px solid var(--border); border-radius: 10px;
+      background: var(--bg);
+    }
+    .cart-item-icon { font-size: 2.2rem; line-height: 1; flex-shrink: 0; }
+    .cart-item-info { flex: 1; min-width: 0; }
+    .cart-item-name { font-size: .9rem; font-weight: 700; }
+    .cart-item-price { font-size: .85rem; color: var(--muted); margin-top: 2px; }
+    .cart-qty {
+      display: flex; align-items: center; gap: 8px; margin-top: 8px;
+    }
+    .qty-btn {
+      width: 26px; height: 26px; border-radius: 6px;
+      background: var(--surface); border: 1px solid var(--border);
+      font-size: 1rem; font-weight: 700; display: flex; align-items: center; justify-content: center;
+      transition: background .15s;
+    }
+    .qty-btn:hover { background: var(--border); }
+    .qty-num { font-size: .9rem; font-weight: 700; min-width: 20px; text-align: center; }
+    .cart-item-remove {
+      font-size: .75rem; color: var(--danger); font-weight: 600; margin-top: 6px;
+      background: none; border: none; cursor: pointer; padding: 0;
+    }
+    .cart-footer { padding: 20px 24px; border-top: 1px solid var(--border); }
+    .cart-subtotal {
+      display: flex; justify-content: space-between;
+      font-size: .9rem; color: var(--muted); margin-bottom: 6px;
+    }
+    .cart-total {
+      display: flex; justify-content: space-between;
+      font-size: 1.15rem; font-weight: 800; margin-bottom: 18px;
+    }
+    .checkout-btn {
+      width: 100%; padding: 14px;
+      background: var(--accent); color: #fff;
+      border-radius: 10px; font-weight: 700; font-size: 1rem;
+      transition: background .18s;
+    }
+    .checkout-btn:hover { background: var(--accent-h); }
+
+    /* ── Toast ──────────────────────────────────────────────────── */
+    .toast {
+      position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(20px);
+      background: #1a1d23; color: #fff;
+      padding: 12px 22px; border-radius: 999px;
+      font-size: .9rem; font-weight: 600;
+      box-shadow: 0 4px 20px rgba(0,0,0,.25);
+      z-index: 500; opacity: 0;
+      transition: opacity .2s, transform .2s;
+      pointer-events: none;
+      white-space: nowrap;
+    }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+    /* ── Footer ─────────────────────────────────────────────────── */
+    footer {
+      max-width: 1280px; margin: 60px auto 0; padding: 32px 24px;
+      border-top: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+      flex-wrap: wrap; gap: 12px;
+      color: var(--muted); font-size: .85rem;
+    }
+
+    /* ── Pagination ─────────────────────────────────────────────── */
+    #pagination {
+      display: flex; align-items: center; justify-content: center;
+      gap: 6px; margin: 32px 0 8px;
+    }
+    .pg-btn {
+      min-width: 38px; height: 38px; padding: 0 10px;
+      border-radius: 8px; border: 1.5px solid var(--border);
+      background: var(--surface); font-size: .9rem; font-weight: 600;
+      cursor: pointer; transition: all .18s;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .pg-btn:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); background: #f0f4ff; }
+    .pg-btn.pg-active { background: var(--accent); border-color: var(--accent); color: #fff; }
+    .pg-btn:disabled { opacity: .35; cursor: default; }
+    .pg-arrow { font-size: 1rem; }
+
+    /* ── Responsive ─────────────────────────────────────────────── */
+    @media (max-width: 700px) {
+      .hero-inner { flex-direction: column; padding: 32px 28px; text-align: center; }
+      .hero-img { font-size: 5rem; margin-top: 16px; }
+      .hero-text h1 { font-size: 1.6rem; }
+      .modal-grid { grid-template-columns: 1fr; }
+      .modal-media { border-radius: 20px 20px 0 0; min-height: 200px; font-size: 6rem; }
+      .modal-content { padding: 24px; }
+      .cart-drawer { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── Header ──────────────────────────────────────────────────── -->
+<header>
+  <div class="header-inner">
+    <div class="logo" onclick="showCatalog()" style="cursor:pointer">
+      <div class="logo-icon">
+        <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      </div>
+      Home<span>Core</span>
+    </div>
+    <div class="search-wrap">
+      <svg viewBox="0 0 24 24" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input type="text" id="searchInput" placeholder="Search appliances…" />
+    </div>
+    <button class="wishlist-nav-btn" id="wishlistToggle">
+      ♡ Wishlist
+      <span class="wl-nav-badge" id="wlBadge">0</span>
+    </button>
+    <button class="cart-btn" id="cartToggle">
+      <svg viewBox="0 0 24 24" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+      Cart
+      <span class="cart-badge" id="cartBadge">0</span>
+    </button>
+  </div>
+</header>
+
+<!-- ── Hero ────────────────────────────────────────────────────── -->
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-text">
+      <h1>Premium Home<br>Appliances, Delivered.</h1>
+      <p>Upgrade your living space with cutting-edge tech. Free delivery on orders over $200.</p>
+      <a href="#catalog" class="hero-cta">
+        Browse Catalog
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+      </a>
+    </div>
+    <div class="hero-img">🏠</div>
+  </div>
+</section>
+
+<!-- ── Categories ──────────────────────────────────────────────── -->
+<section class="section" id="catalog">
+  <div class="cats" id="catPills"></div>
+  <div class="tag-filter-row" id="tagPills"></div>
+</section>
+
+<!-- ── Product Grid ────────────────────────────────────────────── -->
+<section class="section">
+  <div class="section-title" id="gridTitle">All Products</div>
+  <div class="grid" id="productGrid"></div>
+</section>
+
+<!-- ── Wishlist Page ───────────────────────────────────────────── -->
+<section class="section" id="wishlistPage">
+  <div class="wl-header">
+    <div class="section-title" id="wlTitle">My Wishlist</div>
+    <button class="wl-clear-btn" onclick="clearWishlist()">Clear all</button>
+  </div>
+  <div class="grid" id="wishlistGrid"></div>
+</section>
+
+<!-- ── Footer ─────────────────────────────────────────────────── -->
+<footer>
+  <span>© 2026 HomeCore. All rights reserved.</span>
+  <span>Free shipping · 2-year warranty · 30-day returns</span>
+</footer>
+
+<!-- ── Product Modal ──────────────────────────────────────────── -->
+<div class="overlay" id="modalOverlay">
+  <div class="modal" id="modalBox">
+    <div class="modal-grid">
+      <div class="modal-media" id="modalMedia">
+        <button class="modal-close" id="modalClose">✕</button>
+        <span id="modalEmoji"></span>
+      </div>
+      <div class="modal-content">
+        <div class="modal-cat" id="modalCat"></div>
+        <div class="modal-name" id="modalName"></div>
+        <div class="modal-stars" id="modalStars"></div>
+        <div class="modal-desc" id="modalDesc"></div>
+        <div class="modal-specs" id="modalSpecs"></div>
+        <div class="modal-price-row">
+          <div class="modal-price" id="modalPrice"></div>
+          <div class="modal-price-old" id="modalOld"></div>
+        </div>
+        <div class="modal-actions">
+          <button class="btn-primary" id="modalAddBtn">Add to Cart</button>
+          <button class="btn-outline" id="wishlistBtn" title="Save for later">♡</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── Cart Drawer ────────────────────────────────────────────── -->
+<div class="cart-overlay" id="cartOverlay">
+  <div class="cart-drawer">
+    <div class="cart-header">
+      <h2>Your Cart</h2>
+      <button class="cart-close-btn" id="cartClose">✕</button>
+    </div>
+    <div class="cart-items" id="cartItems"></div>
+    <div class="cart-footer" id="cartFooter" style="display:none">
+      <div class="cart-subtotal"><span>Subtotal</span><span id="cartSubtotal">$0</span></div>
+      <div class="cart-subtotal"><span>Shipping</span><span id="cartShipping">Free</span></div>
+      <div class="cart-total"><span>Total</span><span id="cartTotal">$0</span></div>
+      <button class="checkout-btn" onclick="checkout()">Proceed to Checkout →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── Toast ───────────────────────────────────────────────────── -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ── Product data ──────────────────────────────────────────────
+const products = [
+  {
+    id: 1, category: "Refrigerators", emoji: "🧊",
+    name: "FrostGuard Pro 600L",
+    desc: "French-door refrigerator with smart temperature zones, built-in water dispenser, and 14\" touchscreen panel for family organisation.",
+    price: 1299, oldPrice: 1599,
+    badge: "sale", rating: 4.8, reviews: 312,
+    specs: [
+      ["Capacity", "600 L"], ["Energy Class", "A+++"], ["Noise Level", "38 dB"],
+      ["Dimensions", "91 × 70 × 178 cm"], ["Colour", "Stainless Steel"],
+    ]
+  },
+  {
+    id: 2, category: "Washing Machines", emoji: "🫧",
+    name: "SpinWave Ultra 10kg",
+    desc: "AI-powered washing machine with auto-dosing detergent, steam refresh cycle, and Wi-Fi connectivity for remote control.",
+    price: 849, oldPrice: null,
+    badge: "new", rating: 4.7, reviews: 198,
+    specs: [
+      ["Load Capacity", "10 kg"], ["Spin Speed", "1600 RPM"], ["Energy Class", "A+++"],
+      ["Programmes", "22"], ["Noise (wash)", "46 dB"],
+    ]
+  },
+  {
+    id: 3, category: "Ovens", emoji: "🍕",
+    name: "ThermoChef 75 Combi",
+    desc: "Pyrolytic combi oven with steam injection, pizza mode, and 75 L capacity. Perfect for family-sized baking and roasting.",
+    price: 699, oldPrice: 799,
+    badge: "sale", rating: 4.9, reviews: 445,
+    specs: [
+      ["Volume", "75 L"], ["Functions", "12"], ["Max Temp", "300 °C"],
+      ["Self-Cleaning", "Pyrolytic"], ["Control", "Full Touch"],
+    ]
+  },
+  {
+    id: 4, category: "Dishwashers", emoji: "🍽️",
+    name: "AquaClean 60 Silence",
+    desc: "Ultra-quiet 44 dB dishwasher with AutoSense soil detection, quick 30-min cycle, and adjustable upper basket.",
+    price: 589, oldPrice: null,
+    badge: "top", rating: 4.6, reviews: 267,
+    specs: [
+      ["Place Settings", "14"], ["Noise Level", "44 dB"], ["Energy Class", "A++"],
+      ["Water Usage", "9.5 L/cycle"], ["Programmes", "9"],
+    ]
+  },
+  {
+    id: 5, category: "Air Conditioners", emoji: "❄️",
+    name: "ArcticWave 24K Inverter",
+    desc: "Dual-zone inverter A/C with HEPA air filtration, heat-pump mode, and smart home integration. Cools rooms up to 70 m².",
+    price: 1149, oldPrice: 1349,
+    badge: "sale", rating: 4.7, reviews: 183,
+    specs: [
+      ["Capacity", "24 000 BTU"], ["Coverage", "Up to 70 m²"], ["Energy Class", "A+++"],
+      ["SCOP (heating)", "4.2"], ["Refrigerant", "R32"],
+    ]
+  },
+  {
+    id: 6, category: "Vacuum Cleaners", emoji: "🌀",
+    name: "VortexPro Cordless V12",
+    desc: "Cordless stick vacuum with 60-min battery life, 270° flex hose, HEPA 13 filtration, and self-emptying base station.",
+    price: 479, oldPrice: 549,
+    badge: "top", rating: 4.8, reviews: 521,
+    specs: [
+      ["Suction Power", "230 AW"], ["Battery", "60 min"], ["Dustbin", "0.7 L"],
+      ["Filtration", "HEPA 13"], ["Weight", "3.1 kg"],
+    ]
+  },
+  {
+    id: 7, category: "Coffee Machines", emoji: "☕",
+    name: "BaristaMatic One-Touch",
+    desc: "Super-automatic espresso machine with built-in grinder, milk frother, and 15 one-touch beverages. TFT colour display.",
+    price: 799, oldPrice: null,
+    badge: "new", rating: 4.9, reviews: 334,
+    specs: [
+      ["Pressure", "19 bar"], ["Bean Hopper", "300 g"], ["Water Tank", "2.5 L"],
+      ["Grinder", "Ceramic Burr"], ["Beverages", "15"],
+    ]
+  },
+  {
+    id: 8, category: "Microwaves", emoji: "📡",
+    name: "QuickGrill 25L Convection",
+    desc: "Convection microwave with grill and crisp function, 25 L capacity, inverter magnetron, and keep-warm mode.",
+    price: 249, oldPrice: 299,
+    badge: "sale", rating: 4.5, reviews: 412,
+    specs: [
+      ["Capacity", "25 L"], ["Microwave Power", "1000 W"], ["Grill Power", "1400 W"],
+      ["Sensor Cooking", "Yes"], ["Colour", "Mirror Black"],
+    ]
+  },
+  {
+    id: 9, category: "Air Purifiers", emoji: "💨",
+    name: "PureAir 360 Smart",
+    desc: "360° air purifier covering up to 50 m², with 4-stage filtration (pre-filter, HEPA 14, activated carbon, UV). App controlled.",
+    price: 349, oldPrice: null,
+    badge: "new", rating: 4.8, reviews: 278,
+    specs: [
+      ["Coverage", "50 m²"], ["CADR", "450 m³/h"], ["Filtration", "HEPA H14 + UV"],
+      ["Noise (low)", "22 dB"], ["Filter Life", "12 months"],
+    ]
+  },
+  {
+    id: 10, category: "Blenders", emoji: "🥤",
+    name: "BlendForce Titan 2200W",
+    desc: "Professional countertop blender with 2200 W motor, self-cleaning function, 10-speed dial, and noise-dampening shield.",
+    price: 189, oldPrice: 229,
+    badge: "top", rating: 4.7, reviews: 603,
+    specs: [
+      ["Motor", "2200 W"], ["Capacity", "2.0 L"], ["Speeds", "10 + Pulse"],
+      ["Blade", "6-Wing Steel"], ["Noise Cover", "Yes"],
+    ]
+  },
+  {
+    id: 11, category: "Washing Machines", emoji: "🫧",
+    name: "TwinDrum Compact 7kg",
+    desc: "Slim 40 cm front-loader ideal for apartments. Features rapid wash, allergen programme, and drum-clean cycle.",
+    price: 549, oldPrice: 649,
+    badge: "sale", rating: 4.5, reviews: 144,
+    specs: [
+      ["Load Capacity", "7 kg"], ["Depth", "40 cm"], ["Spin Speed", "1200 RPM"],
+      ["Energy Class", "A++"], ["Programmes", "15"],
+    ]
+  },
+  {
+    id: 12, category: "Refrigerators", emoji: "🧊",
+    name: "SlimCool 300L NoFrost",
+    desc: "Under-counter NoFrost fridge-freezer with Total No Frost technology, LED lighting, and holiday mode.",
+    price: 699, oldPrice: null,
+    badge: null, rating: 4.6, reviews: 189,
+    specs: [
+      ["Fridge", "220 L"], ["Freezer", "80 L"], ["Height", "133 cm"],
+      ["NoFrost", "Total"], ["Energy Class", "A++"],
+    ]
+  },
+];
+
+// ── State ──────────────────────────────────────────────────────
+let cart = {};
+let wishlist = new Set();
+let activeCategory = "All";
+let activeProduct = null;
+let currentPage = 1;
+const PAGE_SIZE = 6;
+let activeTags = new Set(); // empty = show all
+
+const TAG_META = [
+  { key: "new",    label: "New",    dot: "#2563eb" },
+  { key: "sale",   label: "Sale",   dot: "#dc2626" },
+  { key: "top",    label: "Top",    dot: "#059669" },
+  { key: "others", label: "Others", dot: "#7c3aed" },
+];
+
+// ── Helpers ────────────────────────────────────────────────────
+const categories = ["All", ...new Set(products.map(p => p.category))];
+
+function stars(rating) {
+  const full = Math.floor(rating);
+  const half = rating % 1 >= 0.5 ? 1 : 0;
+  const empty = 5 - full - half;
+  return "★".repeat(full) + (half ? "½" : "") + "☆".repeat(empty);
+}
+
+function fmt(n) { return "$" + n.toLocaleString("en-US", {minimumFractionDigits: 0}); }
+
+function cartTotal() {
+  return Object.entries(cart).reduce((s, [id, qty]) => {
+    const p = products.find(x => x.id === +id);
+    return s + (p ? p.price * qty : 0);
+  }, 0);
+}
+
+function cartCount() {
+  return Object.values(cart).reduce((s, q) => s + q, 0);
+}
+
+// ── Toast ──────────────────────────────────────────────────────
+function showToast(msg) {
+  const t = document.getElementById("toast");
+  t.textContent = msg;
+  t.classList.add("show");
+  setTimeout(() => t.classList.remove("show"), 2400);
+}
+
+// ── Cart badge ─────────────────────────────────────────────────
+function refreshBadge() {
+  const b = document.getElementById("cartBadge");
+  const c = cartCount();
+  b.textContent = c;
+  b.style.display = c > 0 ? "flex" : "none";
+}
+
+// ── Render cards ───────────────────────────────────────────────
+function renderTagPills() {
+  const chips = activeTags.size === 0
+    ? `<span style="color:var(--muted);font-size:.85rem">All Tags</span>`
+    : [...activeTags].map(k => {
+        const m = TAG_META.find(t => t.key === k);
+        return `<span class="tag-chip tag-chip-${k}">${m.label}</span>`;
+      }).join("");
+
+  const options = TAG_META.map(({ key, label, dot }) => {
+    const checked = activeTags.has(key);
+    return `<label class="tag-option ${checked ? "checked" : ""}" data-tag="${key}" onclick="toggleTag('${key}')">
+      <div class="tag-checkbox"><span class="tag-checkbox-tick">✓</span></div>
+      <span class="tag-dot" style="background:${dot}"></span>
+      ${label}
+    </label>`;
+  }).join("");
+
+  document.getElementById("tagPills").innerHTML = `
+    <span class="tag-label">Tags:</span>
+    <div class="tag-listbox-wrap">
+      <button class="tag-listbox-btn" id="tagListboxBtn" onclick="toggleTagDropdown()">
+        <span class="tag-selected-chips" id="tagChips">${chips}</span>
+        <span class="tl-chevron">▼</span>
+      </button>
+      <div class="tag-dropdown" id="tagDropdown">
+        ${options}
+        <div class="tag-dropdown-footer">
+          <button class="tag-clear-btn" onclick="clearTags()">Clear all</button>
+        </div>
+      </div>
+    </div>`;
+}
+
+function toggleTagDropdown() {
+  document.getElementById("tagDropdown").classList.toggle("open");
+  document.getElementById("tagListboxBtn").classList.toggle("open");
+}
+
+function toggleTag(key) {
+  if (activeTags.has(key)) activeTags.delete(key);
+  else activeTags.add(key);
+  currentPage = 1;
+  renderTagPills();
+  renderGrid(activeCategory, document.getElementById("searchInput").value);
+  // keep dropdown open after selection
+  document.getElementById("tagDropdown").classList.add("open");
+  document.getElementById("tagListboxBtn").classList.add("open");
+}
+
+function clearTags() {
+  activeTags.clear();
+  currentPage = 1;
+  renderTagPills();
+  renderGrid(activeCategory, document.getElementById("searchInput").value);
+  document.getElementById("tagDropdown").classList.add("open");
+  document.getElementById("tagListboxBtn").classList.add("open");
+}
+
+function renderGrid(filter = "All", search = "") {
+  const grid = document.getElementById("productGrid");
+  const title = document.getElementById("gridTitle");
+  let list = products;
+  if (filter !== "All") list = list.filter(p => p.category === filter);
+  if (activeTags.size > 0) {
+    list = list.filter(p =>
+      activeTags.has(p.badge) || (activeTags.has("others") && !p.badge)
+    );
+  }
+  if (search) {
+    const q = search.toLowerCase();
+    list = list.filter(p =>
+      p.name.toLowerCase().includes(q) ||
+      p.desc.toLowerCase().includes(q) ||
+      p.category.toLowerCase().includes(q)
+    );
+  }
+
+  const totalPages = Math.max(1, Math.ceil(list.length / PAGE_SIZE));
+  if (currentPage > totalPages) currentPage = totalPages;
+  const start = (currentPage - 1) * PAGE_SIZE;
+  const page = list.slice(start, start + PAGE_SIZE);
+
+  title.textContent = filter === "All" ? `All Products (${list.length})` : `${filter} (${list.length})`;
+
+  grid.innerHTML = page.map(p => {
+    const inCart = cart[p.id] > 0;
+    const badgeHtml = p.badge
+      ? `<div class="card-badge badge-${p.badge}">${p.badge}</div>` : "";
+    return `
+    <div class="card" onclick="openModal(${p.id})">
+      <div class="card-img">
+        ${badgeHtml}
+        ${p.emoji}
+        <button class="card-heart ${wishlist.has(p.id) ? "liked" : ""}" onclick="event.stopPropagation(); toggleWishlist(${p.id})" title="Save to wishlist">
+          ${wishlist.has(p.id) ? "♥" : "♡"}
+        </button>
+      </div>
+      <div class="card-body">
+        <div class="card-category">${p.category}</div>
+        <div class="card-name">${p.name}</div>
+        <div class="card-desc">${p.desc.slice(0, 90)}…</div>
+        <div class="card-stars">
+          <span style="color:#f59e0b;font-size:.9rem">${"★".repeat(Math.floor(p.rating))}${"☆".repeat(5 - Math.floor(p.rating))}</span>
+          <span style="font-size:.78rem;color:var(--muted);margin-left:4px">${p.rating} (${p.reviews})</span>
+        </div>
+      </div>
+      <div class="card-footer">
+        <div>
+          <span class="price">${fmt(p.price)}</span>
+          ${p.oldPrice ? `<span class="price-old">${fmt(p.oldPrice)}</span>` : ""}
+        </div>
+        <button class="add-btn ${inCart ? "in-cart" : ""}" onclick="event.stopPropagation(); toggleCart(${p.id})">
+          <svg viewBox="0 0 24 24" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+          ${inCart ? "Added" : "Add"}
+        </button>
+      </div>
+    </div>`;
+  }).join("");
+
+  renderPagination(totalPages);
+}
+
+// ── Pagination ─────────────────────────────────────────────────
+function renderPagination(totalPages) {
+  let el = document.getElementById("pagination");
+  if (!el) {
+    el = document.createElement("div");
+    el.id = "pagination";
+    document.getElementById("productGrid").insertAdjacentElement("afterend", el);
+  }
+  if (totalPages <= 1) { el.innerHTML = ""; return; }
+
+  const pages = [];
+  for (let i = 1; i <= totalPages; i++) pages.push(i);
+
+  el.innerHTML = `
+    <button class="pg-btn pg-arrow" onclick="goPage(${currentPage - 1})" ${currentPage === 1 ? "disabled" : ""}>&#8592;</button>
+    ${pages.map(i => `
+      <button class="pg-btn ${i === currentPage ? "pg-active" : ""}" onclick="goPage(${i})">${i}</button>
+    `).join("")}
+    <button class="pg-btn pg-arrow" onclick="goPage(${currentPage + 1})" ${currentPage === totalPages ? "disabled" : ""}>&#8594;</button>
+  `;
+}
+
+function goPage(n) {
+  currentPage = n;
+  renderGrid(activeCategory, document.getElementById("searchInput").value);
+  document.getElementById("catalog").scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+// ── Category pills ─────────────────────────────────────────────
+function renderCats() {
+  document.getElementById("catPills").innerHTML = categories.map(c =>
+    `<button class="cat-pill ${c === activeCategory ? "active" : ""}" onclick="selectCat('${c}')">${c}</button>`
+  ).join("");
+}
+
+function selectCat(cat) {
+  activeCategory = cat;
+  activeTags.clear();
+  currentPage = 1;
+  renderCats();
+  renderTagPills();
+  renderGrid(cat, document.getElementById("searchInput").value);
+}
+
+// ── Toggle cart (from card) ────────────────────────────────────
+function toggleCart(id) {
+  const p = products.find(x => x.id === id);
+  if (cart[id]) {
+    delete cart[id];
+    showToast(`Removed "${p.name}" from cart`);
+  } else {
+    cart[id] = 1;
+    showToast(`"${p.name}" added to cart ✓`);
+  }
+  refreshBadge();
+  renderGrid(activeCategory, document.getElementById("searchInput").value);
+  if (activeProduct && activeProduct.id === id) renderModalButtons();
+  renderCartDrawer();
+}
+
+function addToCartFromModal(id) {
+  const p = products.find(x => x.id === id);
+  if (!cart[id]) {
+    cart[id] = 1;
+    showToast(`"${p.name}" added to cart ✓`);
+  } else {
+    cart[id]++;
+    showToast(`"${p.name}" qty → ${cart[id]}`);
+  }
+  refreshBadge();
+  renderGrid(activeCategory, document.getElementById("searchInput").value);
+  renderModalButtons();
+  renderCartDrawer();
+}
+
+// ── Modal ──────────────────────────────────────────────────────
+function openModal(id) {
+  activeProduct = products.find(p => p.id === id);
+  const p = activeProduct;
+  document.getElementById("modalEmoji").textContent = p.emoji;
+  document.getElementById("modalCat").textContent = p.category;
+  document.getElementById("modalName").textContent = p.name;
+  document.getElementById("modalStars").innerHTML =
+    `<span style="color:#f59e0b">${"★".repeat(Math.floor(p.rating))}${"☆".repeat(5-Math.floor(p.rating))}</span>
+     <span>${p.rating} · ${p.reviews} reviews</span>`;
+  document.getElementById("modalDesc").textContent = p.desc;
+  document.getElementById("modalSpecs").innerHTML = p.specs.map(([k,v]) =>
+    `<div class="spec-row"><span class="spec-key">${k}</span><span class="spec-val">${v}</span></div>`
+  ).join("");
+  document.getElementById("modalPrice").textContent = fmt(p.price);
+  document.getElementById("modalOld").textContent = p.oldPrice ? fmt(p.oldPrice) : "";
+  renderModalButtons();
+  document.getElementById("modalOverlay").classList.add("open");
+  document.body.style.overflow = "hidden";
+}
+
+function renderModalButtons() {
+  const p = activeProduct;
+  const inCart = cart[p.id] > 0;
+  const btn = document.getElementById("modalAddBtn");
+  btn.textContent = inCart ? `In Cart (${cart[p.id]}) — Add More` : "Add to Cart";
+  btn.className = "btn-primary" + (inCart ? " in-cart" : "");
+  const wb = document.getElementById("wishlistBtn");
+  wb.className = "btn-outline" + (wishlist.has(p.id) ? " wishlist-active" : "");
+  wb.textContent = wishlist.has(p.id) ? "♥" : "♡";
+}
+
+function closeModal() {
+  document.getElementById("modalOverlay").classList.remove("open");
+  document.body.style.overflow = "";
+  activeProduct = null;
+}
+
+document.getElementById("modalAddBtn").onclick = () => addToCartFromModal(activeProduct.id);
+document.getElementById("wishlistBtn").onclick = () => {
+  toggleWishlist(activeProduct.id);
+  renderModalButtons();
+};
+document.getElementById("modalClose").onclick = closeModal;
+document.getElementById("modalOverlay").onclick = e => { if (e.target === e.currentTarget) closeModal(); };
+
+// ── Wishlist ───────────────────────────────────────────────────
+function toggleWishlist(id) {
+  const p = products.find(x => x.id === id);
+  if (wishlist.has(id)) {
+    wishlist.delete(id);
+    showToast(`Removed "${p.name}" from wishlist`);
+  } else {
+    wishlist.add(id);
+    showToast(`"${p.name}" saved to wishlist ♥`);
+  }
+  refreshWishlistBadge();
+  renderGrid(activeCategory, document.getElementById("searchInput").value);
+  if (currentView === "wishlist") renderWishlistPage();
+}
+
+function refreshWishlistBadge() {
+  const b = document.getElementById("wlBadge");
+  const n = wishlist.size;
+  b.textContent = n;
+  b.style.display = n > 0 ? "flex" : "none";
+  const btn = document.getElementById("wishlistToggle");
+  btn.textContent = "";
+  btn.innerHTML = (wishlist.size > 0 ? "♥" : "♡") + " Wishlist" +
+    `<span class="wl-nav-badge" id="wlBadge" style="display:${n > 0 ? "flex" : "none"}">${n}</span>`;
+  btn.className = "wishlist-nav-btn" + (currentView === "wishlist" ? " active" : "");
+}
+
+function renderWishlistPage() {
+  const grid = document.getElementById("wishlistGrid");
+  const title = document.getElementById("wlTitle");
+  const list = products.filter(p => wishlist.has(p.id));
+  title.textContent = `My Wishlist (${list.length})`;
+  if (list.length === 0) {
+    grid.innerHTML = `<div class="wl-empty" style="grid-column:1/-1">
+      <div class="wl-empty-icon">♡</div>
+      <h3>Your wishlist is empty</h3>
+      <p>Like products from the catalog to save them here.</p>
+      <button class="wl-empty-cta" onclick="showCatalog()">Browse Catalog</button>
+    </div>`;
+    return;
+  }
+  grid.innerHTML = list.map(p => {
+    const inCart = cart[p.id] > 0;
+    const badgeHtml = p.badge ? `<div class="card-badge badge-${p.badge}">${p.badge}</div>` : "";
+    return `
+    <div class="card" onclick="openModal(${p.id})">
+      <div class="card-img">
+        ${badgeHtml}
+        ${p.emoji}
+        <button class="card-heart liked" onclick="event.stopPropagation(); toggleWishlist(${p.id})" title="Remove from wishlist">♥</button>
+      </div>
+      <div class="card-body">
+        <div class="card-category">${p.category}</div>
+        <div class="card-name">${p.name}</div>
+        <div class="card-desc">${p.desc.slice(0, 90)}…</div>
+        <div class="card-stars">
+          <span style="color:#f59e0b;font-size:.9rem">${"★".repeat(Math.floor(p.rating))}${"☆".repeat(5 - Math.floor(p.rating))}</span>
+          <span style="font-size:.78rem;color:var(--muted);margin-left:4px">${p.rating} (${p.reviews})</span>
+        </div>
+      </div>
+      <div class="card-footer">
+        <div>
+          <span class="price">${fmt(p.price)}</span>
+          ${p.oldPrice ? `<span class="price-old">${fmt(p.oldPrice)}</span>` : ""}
+        </div>
+        <button class="add-btn ${inCart ? "in-cart" : ""}" onclick="event.stopPropagation(); toggleCart(${p.id})">
+          <svg viewBox="0 0 24 24" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+          ${inCart ? "Added" : "Add"}
+        </button>
+      </div>
+    </div>`;
+  }).join("");
+}
+
+function clearWishlist() {
+  wishlist.clear();
+  refreshWishlistBadge();
+  renderWishlistPage();
+  renderGrid(activeCategory, document.getElementById("searchInput").value);
+  showToast("Wishlist cleared");
+}
+
+let currentView = "catalog";
+
+function showWishlist() {
+  currentView = "wishlist";
+  document.getElementById("wishlistPage").classList.add("visible");
+  document.querySelector(".hero").style.display = "none";
+  document.getElementById("catalog").style.display = "none";
+  document.querySelectorAll(".section:not(#wishlistPage)").forEach(s => {
+    if (s.contains(document.getElementById("productGrid"))) s.style.display = "none";
+  });
+  document.getElementById("wishlistToggle").classList.add("active");
+  renderWishlistPage();
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+function showCatalog() {
+  currentView = "catalog";
+  document.getElementById("wishlistPage").classList.remove("visible");
+  document.querySelector(".hero").style.display = "";
+  document.getElementById("catalog").style.display = "";
+  document.querySelectorAll(".section:not(#wishlistPage)").forEach(s => {
+    if (s.contains(document.getElementById("productGrid"))) s.style.display = "";
+  });
+  document.getElementById("wishlistToggle").classList.remove("active");
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+// ── Cart drawer ────────────────────────────────────────────────
+function renderCartDrawer() {
+  const el = document.getElementById("cartItems");
+  const footer = document.getElementById("cartFooter");
+  const entries = Object.entries(cart).filter(([,q]) => q > 0);
+  if (entries.length === 0) {
+    el.innerHTML = `<div class="cart-empty">
+      <div class="cart-empty-icon">🛒</div>
+      <strong>Your cart is empty</strong>
+      <span>Browse our catalog and add items!</span>
+    </div>`;
+    footer.style.display = "none";
+    return;
+  }
+  footer.style.display = "block";
+  el.innerHTML = entries.map(([id, qty]) => {
+    const p = products.find(x => x.id === +id);
+    if (!p) return "";
+    return `<div class="cart-item">
+      <div class="cart-item-icon">${p.emoji}</div>
+      <div class="cart-item-info">
+        <div class="cart-item-name">${p.name}</div>
+        <div class="cart-item-price">${fmt(p.price)} each</div>
+        <div class="cart-qty">
+          <button class="qty-btn" onclick="changeQty(${p.id}, -1)">−</button>
+          <span class="qty-num">${qty}</span>
+          <button class="qty-btn" onclick="changeQty(${p.id}, 1)">+</button>
+          <span style="font-size:.82rem;color:var(--muted);margin-left:6px">${fmt(p.price * qty)}</span>
+        </div>
+        <button class="cart-item-remove" onclick="removeFromCart(${p.id})">Remove</button>
+      </div>
+    </div>`;
+  }).join("");
+  const sub = cartTotal();
+  const shipping = sub >= 200 ? "Free" : "$15";
+  const total = sub >= 200 ? sub : sub + 15;
+  document.getElementById("cartSubtotal").textContent = fmt(sub);
+  document.getElementById("cartShipping").textContent = shipping;
+  document.getElementById("cartTotal").textContent = fmt(total);
+}
+
+function changeQty(id, delta) {
+  cart[id] = (cart[id] || 0) + delta;
+  if (cart[id] <= 0) delete cart[id];
+  refreshBadge();
+  renderCartDrawer();
+  renderGrid(activeCategory, document.getElementById("searchInput").value);
+  if (activeProduct && activeProduct.id === id) renderModalButtons();
+}
+
+function removeFromCart(id) {
+  const p = products.find(x => x.id === id);
+  delete cart[id];
+  refreshBadge();
+  renderCartDrawer();
+  renderGrid(activeCategory, document.getElementById("searchInput").value);
+  showToast(`Removed "${p.name}"`);
+}
+
+function checkout() {
+  showToast("🎉 Order placed! Thank you for shopping with HomeCore.");
+  cart = {};
+  refreshBadge();
+  renderCartDrawer();
+  renderGrid(activeCategory, document.getElementById("searchInput").value);
+  closeCart();
+}
+
+function openCart() {
+  document.getElementById("cartOverlay").classList.add("open");
+  document.body.style.overflow = "hidden";
+  renderCartDrawer();
+}
+
+function closeCart() {
+  document.getElementById("cartOverlay").classList.remove("open");
+  document.body.style.overflow = "";
+}
+
+document.getElementById("wishlistToggle").onclick = () => {
+  if (currentView === "wishlist") showCatalog(); else showWishlist();
+};
+document.getElementById("cartToggle").onclick = openCart;
+document.getElementById("cartClose").onclick = closeCart;
+document.getElementById("cartOverlay").onclick = e => { if (e.target === e.currentTarget) closeCart(); };
+
+// ── Search ────────────────────────────────────────────────────
+document.getElementById("searchInput").addEventListener("input", e => {
+  currentPage = 1;
+  renderGrid(activeCategory, e.target.value);
+});
+
+// ── Keyboard shortcuts & outside-click ───────────────────────
+document.addEventListener("keydown", e => {
+  if (e.key === "Escape") { closeModal(); closeCart(); closeTagDropdown(); }
+});
+document.addEventListener("click", e => {
+  const wrap = document.querySelector(".tag-listbox-wrap");
+  if (wrap && !wrap.contains(e.target)) closeTagDropdown();
+});
+
+function closeTagDropdown() {
+  const dd = document.getElementById("tagDropdown");
+  const btn = document.getElementById("tagListboxBtn");
+  if (dd) dd.classList.remove("open");
+  if (btn) btn.classList.remove("open");
+}
+
+// ── Init ──────────────────────────────────────────────────────
+renderCats();
+renderTagPills();
+renderGrid();
+refreshWishlistBadge();
+</script>
+</body>
+</html>
